@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.green.greengram4.feed.FeedMapper">
+    <insert id="insFeed" useGeneratedKeys="true" keyProperty="ifeed">
+        INSERT INTO t_feed
+        SET iuser = #{iuser}
+        , contents = #{contents}
+        , location = #{location}
+    </insert>
+    <select id="selFeed">
+        SELECT B.ifeed, A.iuser AS writerIuser, B.contents, B.location
+        , A.nm AS writerNm, B.created_at AS createdAt, A.pic AS writerPic
+        , if(C.ifeed IS NULL, 0, 1) AS isFav
+        FROM t_user A
+        JOIN t_feed B
+        ON A.iuser = B.iuser
+        <!--ifFavList 에 따라 내가 좋아요 한 애를 볼지 모두 볼지를 결정합니다.-->
+        <choose>
+            <when test="isFavList == 1">
+                INNER JOIN t_feedFav C
+            </when>
+            <otherwise>
+                LEFT JOIN t_feed_fav C
+            </otherwise>
+        </choose>
+        ON B.ifeed = C.ifeed
+        AND C.iuser = #{loginedIuser}
+        <if test="isFavList == 0 and targetIuser > 0">
+            WHERE A.iuser = #{targetIuser}
+        </if>
+        ORDER BY B.ifeed DESC
+        LIMIT #{startIdx}, #{rowCount}
+    </select>
+    <select id="selIfeedByFeed">
+        SELECT ifeed FROM t_feed
+        WHERE ifeed = #{ifeed}
+        AND iuser = #{iuser}
+    </select>
+
+    <delete id="delFeed">
+        DELETE FROM t_feed
+        WHERE ifeed = #{ifeed}
+        AND iuser = #{iuser}
+<!--   iuser 안해주어도 되는데 트랜잭션 처리를 위해 해줍니다.     -->
+    </delete>
+</mapper>
