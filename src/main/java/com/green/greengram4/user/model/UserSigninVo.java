@@ -8,5 +8,6 @@ public class UserSigninVo {
     private int iuser;
     private String nm;
     private String pic;
-
+    private String firebaseToken;
+    private String accessToken;
 }
