@@ -1,10 +1,10 @@
 app:
   jwt:
     secret: DaeguGreenArtAcademyClass502RoomForJavaSpringBootFighting
-    header-schema-name: authorization
+    header-scheme-name: authorization
     token-type: Bearer
     access-token-expiry: 7200000
-    refresj-token-expiry: 1296000000
+    refresh-token-expiry: 1296000000
 
 # DB \uC811\uC18D \uC815\uBCF4
 spring:

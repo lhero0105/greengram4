@@ -20,16 +20,12 @@ import org.springframework.context.annotation.Configuration;
         ),
         security = @SecurityRequirement(name = "authorization")
 )
-@SecurityScheme(
+@SecurityScheme( // 값이 일치 해야 합니다.
         type = SecuritySchemeType.HTTP
-
-
-
-
-        , name = "autorization"
+        , name = "authorization"
         , in = SecuritySchemeIn.HEADER
         , bearerFormat = "JWT"
-        , scheme = "BEARER"
+        , scheme = "Bearer"
 )
 public class SwaggerConfiguration {
 /*    @Bean

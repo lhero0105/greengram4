@@ -15,7 +15,7 @@ public class AppProperties {
     @Setter
     public class Jwt {
         private String secret;
-        private String headerSchemaName;
+        private String headerSchemeName;
         private String tokenType;
         private Long accessTokenExpiry;
         private Long refreshTokenExpiry;

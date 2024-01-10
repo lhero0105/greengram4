@@ -49,7 +49,7 @@ public class UserService {
             return vo;
         }
         MyPrincipal myPrincipal = new MyPrincipal();
-        myPrincipal.setIuser(vo.getIuser());
+        myPrincipal.setIuser(entity.getIuser());
         String at = jwtTokenProvider.generateAccessToken(myPrincipal);
         String rt = jwtTokenProvider.generateRefreshToken(myPrincipal);
 

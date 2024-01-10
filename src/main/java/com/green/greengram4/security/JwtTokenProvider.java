@@ -93,7 +93,7 @@ public class JwtTokenProvider {
     // 만든 JWT 해석하는 법
     // 토큰 뽑아내는 법
     public String resolveToken(HttpServletRequest req){ // HttpServletRequest에는 모든 요청 정보가 다 들어 있습니다.
-        String auth = req.getHeader(appProperties.getJwt().getHeaderSchemaName());// header에 담겨져 있는거 중에 headerSchemeName에 해당하는 vaule값이 담깁니다.
+        String auth = req.getHeader(appProperties.getJwt().getHeaderSchemeName());// header에 담겨져 있는거 중에 headerSchemeName에 해당하는 vaule값이 담깁니다.
         if(auth == null){return  null;}
 
         // 0123456 substring으로 6부터 자릅니다. 띄워쓰기 포함
@@ -127,7 +127,7 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token){
         UserDetails userDetails = getUserDetailsFromToken(token);
-
+        // iuser 저장
         return userDetails == null
                 ? null
                 : new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());

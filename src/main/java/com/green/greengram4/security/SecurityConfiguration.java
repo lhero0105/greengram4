@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                                                                     , "/swagger-ui/**"
                                                                     , "/v3/api-docs/**" // 스웨거 라이프러리 부분
                                         ).permitAll() //매치 시키는데.permitAll : 무사 통과
-                                        .anyRequest().authenticated()
+                                        .anyRequest().authenticated() // 나머지는 무조건 로그인이 되어야 합니다.
                                         //.requestMatchers(HttpMethod.GET, "/sign-api/refresh-token").permitAll()
                                         //.requestMatchers(HttpMethod.GET, "/product/**").permitAll()
                                         //.requestMatchers(HttpMethod.POST, "/product/**").permitAll()
