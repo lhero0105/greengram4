@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -36,9 +38,11 @@ public class UserController {
     // 로그인
     @PostMapping("/signin")
     @Operation(summary = "인증", description = "아이디/비번 활용한 인증처리")
-    public UserSigninVo postSignin(@RequestBody UserSigninDto dto){
+    public UserSigninVo postSignin(HttpServletRequest req
+                                   , HttpServletResponse res
+                                   , @RequestBody UserSigninDto dto){
         log.info("dto: {}", dto);
-        return service.signin(dto); // 1성공, 2:아이디없음, 3:비번틀림
+        return service.signin(req, res, dto); // 1성공, 2:아이디없음, 3:비번틀림
     }
 
     // 웹 푸시
@@ -56,6 +60,16 @@ public class UserController {
     @PostMapping("/follow")
     public ResVo toggleFollow(@RequestBody UserFollowDto dto){
         return service.toggleFollow(dto);
+    }
+
+    @PostMapping("/signout")
+    public ResVo postsignout( HttpServletResponse res){
+        return service.signout(res);
+    }
+
+    @GetMapping("/refresh-token")
+    public UserSigninVo getRefreshToken(HttpServletRequest req){
+        return service.getRefreshToken(req);
     }
 
     // 유저 프로필 정보

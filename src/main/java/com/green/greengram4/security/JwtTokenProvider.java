@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Date;
 
@@ -32,7 +34,8 @@ public class JwtTokenProvider {
 
     private final ObjectMapper om;
     private final AppProperties appProperties; // di주입이 이루어집니다.
-    private Key key;
+    // private Key key; // 곧 사라질 문법
+    private SecretKeySpec secretKeySpec;
 
 
     // 생성자로 yaml에 적은 친구의 값을 secret에 넣어줍니다.
@@ -50,9 +53,11 @@ public class JwtTokenProvider {
 
     @PostConstruct // di가 주입되고 나서 메소드가 호출되고자 할 때, 이 방식이 가장 최신
     public void init(){ // 호출 해줘서 실행
-        log.info("secret: {}", appProperties.getJwt().getSecret());
+/*        log.info("secret: {}", appProperties.getJwt().getSecret());
         byte[] keyBytes = Decoders.BASE64.decode(appProperties.getJwt().getSecret());
-        this.key = Keys.hmacShaKeyFor(keyBytes); // 키 발행
+        this.key = Keys.hmacShaKeyFor(keyBytes); // 키 발행 // 곧 사라질 문법*/
+        this.secretKeySpec = new SecretKeySpec(appProperties.getJwt().getSecret().getBytes()
+        , SignatureAlgorithm.HS256.getJcaName());
     }
     // 여기서부터
     public String generateAccessToken(MyPrincipal principal){
@@ -70,7 +75,8 @@ public class JwtTokenProvider {
                 .claims(createClaims(principal)) // 값을 담습니다.
                 .issuedAt(new Date(System.currentTimeMillis())) // 성능이슈 -> 이렇게 해주면 값의 오차가 줄어듭니다.
                 .expiration(new Date(System.currentTimeMillis() + tokenValidMs)) // 만료시간
-                .signWith(this.key) // 키 저장
+                .signWith(secretKeySpec) // 키 저장
+                // .signWith(this.key) // 사라질 문법
                 .compact(); // build()와 동일
     }
     // key와 value를 저장할 수 있습니다.
@@ -119,10 +125,10 @@ public class JwtTokenProvider {
 
     private Claims getAllClaims(String token){
         return Jwts.parser()
-                .setSigningKey(key)
+                .verifyWith(secretKeySpec)
                 .build()
-                .parseClaimsJws(token)
-                .getBody(); // 옛날 버전입니다.
+                .parseSignedClaims(token)
+                .getPayload(); // 최신 버전 입니다.
     }
 
     public Authentication getAuthentication(String token){
@@ -133,7 +139,7 @@ public class JwtTokenProvider {
                 : new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    private UserDetails getUserDetailsFromToken(String token){
+    public UserDetails getUserDetailsFromToken(String token){
         try {
         Claims claims = getAllClaims(token); // 다 가져옵니다
         String json = (String) claims.get("iuser");

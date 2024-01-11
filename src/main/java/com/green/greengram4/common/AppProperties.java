@@ -17,8 +17,15 @@ public class AppProperties {
         private String secret;
         private String headerSchemeName;
         private String tokenType;
-        private Long accessTokenExpiry;
-        private Long refreshTokenExpiry;
+        private long accessTokenExpiry;
+        private long refreshTokenExpiry;
         // 프로그램 실행 시 yaml의 내용이 주입 됩니다.
+        private int refreshTokenCookieMaxAge;
+
+
+        public void setRefreshTokenExpiry(long refreshTokenExpiry){
+            this.refreshTokenExpiry = refreshTokenExpiry;
+            this.refreshTokenCookieMaxAge = (int) refreshTokenExpiry / 1000;
+        }
     }
 }

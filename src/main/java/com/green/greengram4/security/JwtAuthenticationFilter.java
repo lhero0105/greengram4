@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("JwtAuthentication-Token : {}", token);
 
         if(token != null && jwtTokenProvider.isValidateToken(token)){
-            Authentication auth = jwtTokenProvider.getAuthentication(token);
+            Authentication auth = jwtTokenProvider.getAuthentication(token); // 알맞는 상태로 만들어서 전달
             if(auth != null){
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 // 그림 보면 대충 이해갑니다.
