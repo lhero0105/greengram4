@@ -3,6 +3,7 @@ package com.green.greengram4.feed.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,5 +16,6 @@ public class FeedInsDto {
     private int iuser;
     private String contents;
     private String location;
-    private List<String> pics;
+    @JsonIgnore
+    private List<MultipartFile> pics;
 }
